@@ -174,7 +174,6 @@ alias gdc="git diff --shortstat --cached $1"
 # Skip protobuf conflict namespace
 export GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
 
-# internal api pass
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
