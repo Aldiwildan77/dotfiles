@@ -7,6 +7,11 @@ SYNTAX_HIGHLIGHTING="$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 [ ! -d "$AUTO_SUGGESTIONS" ] && git clone https://github.com/zsh-users/zsh-autosuggestions "$AUTO_SUGGESTIONS"
 [ ! -d "$SYNTAX_HIGHLIGHTING" ] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$SYNTAX_HIGHLIGHTING"
 
+# Load the NVM configuration
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # Load the Oh My Zsh plugins
 plugins=(
   git                     # Provides Git aliases and functions
