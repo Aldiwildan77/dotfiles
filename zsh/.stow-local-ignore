@@ -1,0 +1,3 @@
+# zshrc.d is sourced by .zshrc through $DOTFILES_DIR, so it must not be
+# symlinked into $HOME as a stray ~/zshrc.d directory.
+^/zshrc\.d

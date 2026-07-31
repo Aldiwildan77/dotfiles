@@ -1,10 +1,131 @@
 # Dotfiles
 
-A collection of my dotfiles for syncing between machines.
+Config and toolchain for coding, backend, infrastructure and sysadmin work —
+reproducible on macOS, Linux and (best-effort) Windows.
 
-## Installation
+Configs are symlinked with [GNU stow](https://www.gnu.org/software/stow/); the
+toolchain is declared as plain-text manifests under `packages/` and installed
+by the scripts in `install/`.
+
+## Quick start
 
 ```bash
-chmod +x setup.sh
+git clone https://github.com/Aldiwildan77/dotfiles ~/dotfiles
+cd ~/dotfiles
 ./setup.sh
 ```
+
+Clone to `~/dotfiles` specifically — the zsh config resolves everything relative
+to that path. To use a different location, export `DOTFILES_DIR` in your shell.
+
+**Windows** — from PowerShell:
+
+```powershell
+.\install\windows.ps1        # native packages via winget + scoop
+.\install\windows.ps1 -Wsl   # WSL2 + Ubuntu, then run ./setup.sh inside it
+```
+
+## Usage
+
+```bash
+./setup.sh                  # every stage
+./setup.sh packages         # OS package manager pass only
+./setup.sh langs stow       # a specific subset, in the order given
+./setup.sh --help           # stage list and environment variables
+
+DRY_RUN=1 ./setup.sh        # print the plan, change nothing
+SKIP_BREW=1 ./setup.sh      # Linux: skip the Homebrew parity set
+
+./install/doctor.sh         # what is declared vs what is installed
+./install/doctor.sh -v      # per-tool detail
+./install/export.sh         # snapshot this machine into packages/*.local
+```
+
+### Stages
+
+| Stage | What it does |
+| --- | --- |
+| `packages` | OS package manager — `brew bundle` on macOS, apt/dnf/pacman + Linuxbrew + vendor installers on Linux |
+| `langs` | Runtimes via nvm / pyenv / rustup / SDKMAN!, then the tools installed through them |
+| `stow` | Symlinks the config packages into `$HOME` |
+| `shell` | oh-my-zsh, custom plugins, fzf key bindings, default shell |
+
+Every stage is idempotent — re-running skips what is already in place.
+
+## Layout
+
+```
+dotfiles/
+├── setup.sh                 # wrapper around install/bootstrap.sh
+├── install/
+│   ├── bootstrap.sh         # entry point, stage dispatch
+│   ├── lib.sh               # logging, OS detection, manifest parsing
+│   ├── macos.sh             # Xcode CLT + Homebrew + Brewfile
+│   ├── linux.sh             # native packages → Linuxbrew → vendor installers
+│   ├── windows.ps1          # winget + scoop, or WSL2
+│   ├── langs.sh             # node, python, go, rust, ruby, java
+│   ├── stow.sh              # symlinking, with backup of displaced files
+│   ├── shell.sh             # oh-my-zsh and friends
+│   ├── doctor.sh            # declared vs installed
+│   └── export.sh            # machine → packages/*.local snapshot
+├── packages/                # the toolchain, as data
+│   ├── Brewfile             # macOS (formulae + casks + taps)
+│   ├── brew-linux.txt       # Linuxbrew parity set
+│   ├── linux/{apt,dnf,pacman}.txt
+│   ├── windows/{winget,scoop}.txt
+│   ├── {go,cargo,npm,gem,pipx}.txt
+│   └── runtimes.env         # pinned node/python/go/java versions
+├── zsh/                     # stow package → ~/.zshrc, ~/.zshrc.local.example
+│   └── zshrc.d/             # base, exports, plugins, aliases, functions,
+│                            # completions, tools — sourced in that order
+├── git/                     # → ~/.gitconfig, ~/.gitignore_global
+├── vim/ screen/ dig/ wget/  # → ~/.vimrc, ~/.screenrc, ~/.digrc, ~/.wgetrc
+└── docs/TOOLS.md            # what is installed and why, per platform
+```
+
+## Adding a tool
+
+Manifests are the source of truth, so adding a tool means editing data, not code:
+
+1. Add it to `packages/Brewfile` (macOS) **and** the Linux manifest that covers
+   it — `packages/linux/apt.txt` if Debian ships it, otherwise
+   `packages/brew-linux.txt`.
+2. Add the Windows equivalent to `packages/windows/winget.txt` or `scoop.txt`.
+3. Add a `check` line in `install/doctor.sh` if it is something you would notice
+   missing.
+4. Run `./setup.sh packages` to install it locally, then commit.
+
+`./install/export.sh` goes the other direction: it snapshots what a machine
+already has into `packages/*.local` files so you can diff them against the
+curated manifests and fold in anything that drifted. Those `.local` files are
+gitignored — a raw dump always carries one-off installs that do not belong in
+the repo.
+
+## Secrets
+
+Nothing in this repo holds a credential, and nothing should.
+
+- `~/.zshrc.local` — API keys, tokens, work paths, cluster aliases.
+  Start from `zsh/.zshrc.local.example`. Sourced last, so it overrides
+  everything committed here.
+- `~/.gitconfig.work` — work identity and internal remote rewriting.
+  Start from `git/.gitconfig.work.example`. Pulled in by `includeIf` for repos
+  under `~/Workspace/`.
+
+Both paths are gitignored. Better still, keep secrets out of the shell entirely
+and resolve them at use time with `sops`, `age` or a password manager CLI —
+`.zshrc.local.example` shows the pattern.
+
+## Platform notes
+
+**macOS** — the primary target. Everything in `packages/Brewfile` installs,
+including casks and the Apple-platform tools (fastlane, swiftlint, xcodegen).
+
+**Linux** — full parity for the CLI toolchain. The native package manager runs
+first, then Homebrew-on-Linux fills in what the distro does not carry, then
+vendor repos supply docker, gcloud and terraform. Arch needs the least from
+Homebrew; Debian the most. GUI casks have no equivalent and are skipped.
+
+**Windows** — packages only. The zsh configuration does not apply, so
+`install/windows.ps1 -Wsl` is the recommended path: it gets you a real Linux
+environment where the rest of this repo works unchanged.

@@ -1,0 +1,5 @@
+# Rust crates — installed with `cargo install <crate>`
+# The toolchain itself (rustc/cargo/clippy/rustfmt/rust-analyzer) comes from
+# rustup, which install/langs.sh bootstraps. Only extra binaries belong here.
+
+release-plz     # release automation for cargo workspaces

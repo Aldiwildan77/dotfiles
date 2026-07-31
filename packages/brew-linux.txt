@@ -1,0 +1,52 @@
+# Homebrew-on-Linux parity set
+#
+# These are the tools from packages/Brewfile that either do not exist in the
+# distro archives, or ship there so far behind that the distro copy is not
+# worth having. Homebrew is what gets Linux to real parity with the Mac.
+#
+# Installed by install/linux.sh after the native package manager pass.
+# Anything already provided by the distro is skipped there, so ordering the
+# native pass first is intentional.
+
+# --- core userland ---------------------------------------------------------
+yq
+yazi
+peco
+rtk
+
+# --- version control -------------------------------------------------------
+gh
+git-filter-repo
+
+# --- languages + toolchains ------------------------------------------------
+go
+tinygo-org/tools/tinygo
+vfox
+pyenv
+pnpm
+yarn
+
+# --- backend / data --------------------------------------------------------
+golang-migrate
+yoheimuta/protolint/protolint
+temporal
+sonar-scanner
+actionlint
+
+# --- infrastructure --------------------------------------------------------
+kubernetes-cli
+helm
+k9s
+stern
+kubectx
+awscli
+flyctl
+mkcert
+sops
+age
+mutagen-io/mutagen/mutagen
+
+# --- taps needed by the entries above --------------------------------------
+# tinygo-org/tools
+# yoheimuta/protolint
+# mutagen-io/mutagen

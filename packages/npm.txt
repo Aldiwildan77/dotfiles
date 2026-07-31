@@ -1,0 +1,5 @@
+# Global npm packages — installed with `npm install -g <pkg>`
+# Keep this list short. Prefer `npx`/`pnpm dlx` for one-off tools and per-project
+# devDependencies for anything a repo actually builds against.
+
+corepack        # shims pnpm/yarn to the version each project pins

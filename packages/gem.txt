@@ -1,0 +1,13 @@
+# Ruby gems — installed with `gem install <gem>`
+# Scoped to the iOS/Fastlane toolchain and general Ruby dev; everything else in
+# `gem list` on the source machine was a transitive dependency of these.
+
+bundler
+cocoapods
+fastlane
+xcodeproj
+xcpretty
+rspec
+rubocop
+yard
+rufo

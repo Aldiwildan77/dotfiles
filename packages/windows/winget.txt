@@ -1,0 +1,52 @@
+# Windows packages — winget IDs, installed by install/windows.ps1
+#
+# Windows is best-effort parity. The supported path is either these native
+# packages or WSL2 + install/linux.sh, which gets you the real Linux setup.
+
+# --- core ------------------------------------------------------------------
+Git.Git
+GitHub.cli
+Microsoft.PowerShell
+Microsoft.WindowsTerminal
+7zip.7zip
+cURL.cURL
+
+# --- languages -------------------------------------------------------------
+GoLang.Go
+OpenJS.NodeJS.LTS
+Python.Python.3.13
+Rustlang.Rustup
+Oracle.JDK.17
+PHP.PHP
+Getcomposer.Composer
+RubyInstallerTeam.RubyWithDevKit
+
+# --- backend / data --------------------------------------------------------
+Oracle.MySQLShell
+PostgreSQL.psql
+Redis.Redis
+SQLite.SQLite
+Google.Protobuf
+
+# --- infrastructure --------------------------------------------------------
+Docker.DockerDesktop
+Kubernetes.kubectl
+Helm.Helm
+Derailed.k9s
+Amazon.AWSCLI
+Google.CloudSDK
+Hashicorp.Terraform
+Mozilla.SOPS
+FiloSottile.age
+
+# --- utilities -------------------------------------------------------------
+jqlang.jq
+MikeFarah.yq
+BurntSushi.ripgrep.MSVC
+sharkdp.bat
+junegunn.fzf
+Gyan.FFmpeg
+Graphviz.Graphviz
+yt-dlp.yt-dlp
+WinSCP.WinSCP
+Postman.Postman

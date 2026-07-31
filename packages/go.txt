@@ -1,0 +1,10 @@
+# Go tools — installed with `go install <pkg>`
+# Fully cross-platform: identical on macOS, Linux and Windows.
+
+golang.org/x/tools/gopls@latest                          # language server
+golang.org/x/tools/cmd/goimports@latest                  # import-aware formatter
+github.com/go-delve/delve/cmd/dlv@latest                 # debugger
+github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+github.com/cweill/gotests/gotests@latest                 # table-test generator
+github.com/josharian/impl@latest                         # interface stub generator
+github.com/haya14busa/goplay/cmd/goplay@latest           # share snippets to the Go playground

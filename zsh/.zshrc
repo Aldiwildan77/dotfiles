@@ -8,8 +8,8 @@
 COMPANY=${COMPANY:-$1}
 
 ## Load the dotfiles configuration
-export DOTFILES_DIR="$HOME/dotfiles"
-export ZSH="$HOME/.oh-my-zsh"
+export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 
 # ZSH Options
 setopt AUTO_CD
@@ -28,13 +28,33 @@ source_if_exists() {
   fi
 }
 
-config_files=( base.zsh exports.zsh plugins.zsh aliases.zsh functions.zsh completions.zsh )
-for config in "${config_files[@]}"; do
+# --- before oh-my-zsh ------------------------------------------------------
+# base.zsh sets $DOTFILES_OS and puts brew on PATH, so it comes first.
+# plugins.zsh defines the $plugins array that oh-my-zsh.sh reads, and
+# completions.zsh has to land on $fpath before oh-my-zsh runs compinit.
+pre_omz=( base.zsh exports.zsh plugins.zsh completions.zsh )
+for config in "${pre_omz[@]}"; do
   source_if_exists "$DOTFILES_DIR/zsh/zshrc.d/$config"
 done
 
+source "$ZSH/oh-my-zsh.sh"
+
+# --- after oh-my-zsh -------------------------------------------------------
+# Everything below has to win over the plugins. The yarn plugin, for example,
+# aliases `y` to yarn, which would otherwise shadow the yazi function.
+# tools.zsh is last so its version-manager PATH edits take precedence.
+post_omz=( functions.zsh aliases.zsh tools.zsh )
+for config in "${post_omz[@]}"; do
+  source_if_exists "$DOTFILES_DIR/zsh/zshrc.d/$config"
+done
+
+# Company config depends on add_to_env from functions.zsh, so it goes here.
 if [[ -n "$COMPANY" ]]; then
   source_if_exists "$DOTFILES_DIR/zsh/zshrc.d/$COMPANY/$COMPANY.zsh"
 fi
 
-source "$ZSH/oh-my-zsh.sh"
+# Machine-local overrides: secrets, work paths, anything that must not be
+# committed. See zsh/.zshrc.local.example for the expected shape.
+source_if_exists "$HOME/.zshrc.local"
+
+unset pre_omz post_omz config

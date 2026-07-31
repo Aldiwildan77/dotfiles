@@ -1,0 +1,95 @@
+# Arch / Manjaro base packages (pacman)
+# Same role as apt.txt — see that file for the split rationale.
+# Arch ships almost everything, so this list is closer to full parity than
+# apt/dnf and needs less from Homebrew-on-Linux.
+
+# --- build + core userland -------------------------------------------------
+base-devel
+automake
+pkgconf
+coreutils
+stow
+zsh
+curl
+wget
+git
+git-lfs
+mercurial
+unzip
+zip
+xz
+ca-certificates
+gnupg
+
+# --- shell quality of life -------------------------------------------------
+tree
+vim
+screen
+tmux
+htop
+ncdu
+jq
+yq
+ripgrep
+fzf
+bat
+yazi
+
+# --- sysadmin / networking -------------------------------------------------
+openssh
+rsync
+net-tools
+bind
+iputils
+traceroute
+inetutils
+arp-scan
+nload
+lsof
+strace
+tcpdump
+nmap
+
+# --- languages -------------------------------------------------------------
+go
+python
+python-pip
+pyenv
+perl
+ruby
+php
+composer
+rustup
+deno
+
+# --- backend / data clients ------------------------------------------------
+mariadb-clients
+postgresql-libs
+redis
+sqlite
+protobuf
+
+# --- infrastructure --------------------------------------------------------
+ansible
+qemu-base
+rclone
+docker
+docker-compose
+kubectl
+helm
+k9s
+aws-cli-v2
+mkcert
+sops
+age
+
+# --- media / docs ----------------------------------------------------------
+ffmpeg
+ghostscript
+graphviz
+libvips
+libjpeg-turbo
+yt-dlp
+
+# --- github ----------------------------------------------------------------
+github-cli

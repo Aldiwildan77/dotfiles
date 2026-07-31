@@ -1,0 +1,20 @@
+# Machine snapshots produced by install/export.sh. Diff these against the
+# curated manifests, fold in what belongs, then discard — never commit a raw
+# dump: it carries one-off installs and work tooling with it.
+packages/*.local
+packages/**/*.local
+
+# Anything holding secrets stays out, no matter how it got here.
+*.local.zsh
+.zshrc.local
+.gitconfig.work
+*.pem
+*.key
+!git/.gitconfig.work.example
+!zsh/.zshrc.local.example
+
+# OS noise
+.DS_Store
+Thumbs.db
+*~
+*.swp

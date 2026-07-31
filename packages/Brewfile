@@ -1,0 +1,140 @@
+# Brewfile — macOS (and Linuxbrew where noted)
+#
+# Regenerate the raw state of a machine with:
+#   brew bundle dump --force --file=packages/Brewfile.local
+# then fold the diff into this curated file.
+#
+# Install:
+#   brew bundle --file=packages/Brewfile
+
+# ---------------------------------------------------------------------------
+# Taps
+# ---------------------------------------------------------------------------
+tap "mutagen-io/mutagen"
+tap "nrwl/nx"
+tap "shivammathur/extensions"
+tap "shivammathur/php"
+tap "tinygo-org/tools"
+tap "version-fox/tap"
+tap "yoheimuta/protolint"
+
+# ---------------------------------------------------------------------------
+# Shell + core userland
+# ---------------------------------------------------------------------------
+brew "coreutils"        # GNU coreutils, so scripts behave like they do on Linux
+brew "stow"             # symlink farm manager — the backbone of this repo
+brew "zsh"
+brew "bat"              # cat with syntax highlighting
+brew "ripgrep"          # rg
+brew "fzf"              # fuzzy finder
+brew "peco"             # interactive filter
+brew "tree"
+brew "watch"
+brew "wget"
+brew "curl"
+brew "jq"
+brew "yq"
+brew "yazi"             # TUI file manager (see the `y` function in zsh/functions)
+brew "rtk"              # CLI proxy that trims LLM token usage on dev commands
+brew "gnupg"
+brew "openssl@1.1"
+brew "mbedtls"
+brew "libxmlsec1"
+brew "cjson"
+brew "guile"
+brew "automake"
+brew "perl"
+
+# ---------------------------------------------------------------------------
+# Version control
+# ---------------------------------------------------------------------------
+brew "git"
+brew "git-lfs"
+brew "git-filter-repo"
+brew "gh"               # GitHub CLI — also used as the git credential helper
+brew "mercurial"
+
+# ---------------------------------------------------------------------------
+# Languages + toolchains
+# ---------------------------------------------------------------------------
+brew "go"
+brew "tinygo-org/tools/tinygo"
+brew "vfox"             # polyglot version manager (currently manages golang)
+brew "pyenv"
+brew "python@3.10"
+brew "python@3.11"
+brew "php@8.4"
+brew "composer"
+brew "shivammathur/extensions/phpredis@8.4"
+brew "shivammathur/extensions/xdebug@8.5"
+brew "pnpm"
+brew "yarn"
+brew "nrwl/nx/nx"
+
+# ---------------------------------------------------------------------------
+# Backend / data
+# ---------------------------------------------------------------------------
+brew "mysql-client@8.0"
+brew "libpq"            # psql & friends without the full postgres server
+brew "redis"
+brew "sqlite"
+brew "protobuf"
+brew "yoheimuta/protolint/protolint"
+brew "golang-migrate"
+brew "temporal"
+brew "sonar-scanner"
+brew "actionlint"       # GitHub Actions workflow linter
+
+# ---------------------------------------------------------------------------
+# Infrastructure / DevOps / SysAdmin
+# ---------------------------------------------------------------------------
+brew "ansible"
+brew "kubernetes-cli"   # kubectl
+brew "helm"
+brew "k9s"
+brew "stern"            # multi-pod log tailing
+brew "kubectx"          # kubectx + kubens
+brew "awscli"
+brew "flyctl"
+brew "qemu"
+brew "mkcert"           # local trusted TLS certs
+brew "sops"             # encrypted secrets at rest
+brew "age"              # sops backend
+brew "mutagen-io/mutagen/mutagen"
+brew "rclone"
+brew "mole"             # SSH tunnel manager
+brew "arp-scan"
+brew "nload"
+brew "telnet"
+
+# ---------------------------------------------------------------------------
+# Media / docs / misc
+# ---------------------------------------------------------------------------
+brew "ffmpeg"
+brew "ghostscript"
+brew "graphviz"
+brew "vips"
+brew "jpeg"
+brew "yt-dlp"
+
+# ---------------------------------------------------------------------------
+# macOS-only (Apple platform development)
+# ---------------------------------------------------------------------------
+brew "fastlane"
+brew "swiftlint"
+brew "swiftgen"
+brew "xcodegen"
+
+# ---------------------------------------------------------------------------
+# Casks (macOS only)
+# ---------------------------------------------------------------------------
+cask "alt-tab"
+cask "android-platform-tools"
+cask "copyq"
+cask "docker"           # Docker Desktop
+cask "google-cloud-sdk"
+cask "herd"             # local PHP dev environment
+cask "postman"
+cask "bloomrpc"         # gRPC GUI client
+cask "mole-app"
+cask "wave"             # terminal

@@ -1,6 +1,76 @@
 [user]
 	email = aldiwild77@gmail.com
 	name = Aldiwildan77
+
+# Work identity and any employer-specific remote rewriting live outside this
+# repo. Copy git/.gitconfig.work.example to ~/.gitconfig.work and adjust the
+# path below to match where you keep work checkouts.
+[includeIf "gitdir:~/Workspace/"]
+	path = ~/.gitconfig.work
+
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper =
+	# No absolute path: gh lives at /opt/homebrew/bin on Apple Silicon,
+	# /usr/local/bin on Intel and /usr/bin on Linux. Resolving through PATH is
+	# the only form that works unchanged on every machine.
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[init]
+	defaultBranch = main
+[core]
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+	# Large monorepos over a slow link: trade CPU for a smaller working set.
+	compression = 0
+[http]
+	postBuffer = 524288000
+	maxRequests = 5
+	lowSpeedLimit = 0
+	lowSpeedTime = 999
+
+[pull]
+	ff = only
+[push]
+	default = current
+	autoSetupRemote = true
+	followTags = true
+[fetch]
+	prune = true
+	pruneTags = true
+[rebase]
+	autoStash = true
+	autoSquash = true
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	algorithm = histogram
+	colorMoved = default
+[rerere]
+	enabled = true
+[branch]
+	sort = -committerdate
+[column]
+	ui = auto
+
+[alias]
+	st = status -sb
+	co = checkout
+	br = branch
+	ci = commit
+	unstage = reset HEAD --
+	last = log -1 HEAD --stat
+	lg = log --graph --abbrev-commit --date=relative --pretty=format:'%C(auto)%h%d %s %C(dim)(%an, %ar)'
+	amend = commit --amend --no-edit
+	wip = !git add -A && git commit -m 'wip'
+	undo = reset --soft HEAD~1
+	cleanup = !git branch --merged | grep -Ev '(^\\*|main|master|develop)' | xargs -r git branch -d
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
