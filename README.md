@@ -78,10 +78,24 @@ dotfiles/
 ├── zsh/                     # stow package → ~/.zshrc, ~/.zshrc.local.example
 │   └── zshrc.d/             # base, exports, plugins, aliases, functions,
 │                            # completions, tools — sourced in that order
+├── bash/                    # → ~/.bashrc, ~/.bash_profile (fallback shell)
 ├── git/                     # → ~/.gitconfig, ~/.gitignore_global
-├── vim/ screen/ dig/ wget/  # → ~/.vimrc, ~/.screenrc, ~/.digrc, ~/.wgetrc
+├── gh/                      # → ~/.config/gh/config.yml
+├── vim/ tmux/ screen/       # → ~/.vimrc, ~/.tmux.conf, ~/.screenrc
+├── yazi/ zed/               # → ~/.config/yazi/, ~/.config/zed/
+├── editorconfig/            # → ~/.editorconfig
+├── dig/ wget/               # → ~/.digrc, ~/.wgetrc
 └── docs/TOOLS.md            # what is installed and why, per platform
 ```
+
+Vim, tmux and yazi share one Flexoki Dark palette, so the terminal looks like a
+single environment rather than three unrelated tools. The vim colours are
+written inline rather than pulled in as a colorscheme plugin — a bare `vim` on a
+fresh server looks right with nothing installed beyond `~/.vimrc`.
+
+Yazi's plugins and flavors are **not** committed. `package.toml` pins each one
+by revision and hash, and `install/shell.sh` runs `ya pkg install` to rebuild
+them.
 
 ## Adding a tool
 
@@ -115,6 +129,26 @@ Nothing in this repo holds a credential, and nothing should.
 Both paths are gitignored. Better still, keep secrets out of the shell entirely
 and resolve them at use time with `sops`, `age` or a password manager CLI —
 `.zshrc.local.example` shows the pattern.
+
+### One consequence of stowing `.config` packages
+
+Stowing `gh`, `yazi` and `zed` points `~/.config/<tool>` at a directory **inside
+this repo**, so those tools write their runtime state here:
+
+| Tool | Writes | Handled by |
+| --- | --- | --- |
+| gh | `hosts.yml` — your OAuth token | gitignored |
+| yazi | `plugins/`, `flavors/` | gitignored, rebuilt by `ya pkg install` |
+| zed | re-adds `ssh_connections` as you add remotes | review before committing |
+
+`./install/doctor.sh` has a secret guard that fails if any of these — or a
+credential pattern in any tracked file — ever makes it into the index. Run it
+before pushing.
+
+Deliberately **not** exported: `~/.ssh/config` (private hosts and key paths),
+`~/.docker/config.json` (registry auth), `~/.config/gcloud`, and
+`~/.config/psysh/psysh_history`. Those are per-machine and hold credentials or
+session data.
 
 ## Platform notes
 

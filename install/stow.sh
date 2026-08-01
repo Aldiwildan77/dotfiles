@@ -7,7 +7,16 @@ set -uo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-STOW_PACKAGES=(zsh vim git screen dig wget)
+# Every entry is a top-level directory here whose contents mirror $HOME.
+# Packages with a .config/ subtree (yazi, gh, zed) land in ~/.config/<tool>/.
+STOW_PACKAGES=(
+  zsh bash            # shells
+  vim tmux screen     # editors and multiplexers
+  git gh              # version control
+  yazi zed            # file manager, editor
+  editorconfig        # ~/.editorconfig
+  dig wget            # cli tool configs
+)
 
 # Real files already sitting where a symlink needs to go are moved aside rather
 # than deleted — a fresh machine usually has a distro-provided ~/.vimrc.

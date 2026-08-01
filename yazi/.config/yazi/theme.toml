@@ -1,0 +1,6 @@
+[flavor]
+dark = "flexoki-dark"
+
+[git]
+modified = { fg = "blue" }
+deleted  = { fg = "red", bold = true }

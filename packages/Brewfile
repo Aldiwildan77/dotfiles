@@ -24,6 +24,9 @@ tap "yoheimuta/protolint"
 brew "coreutils"        # GNU coreutils, so scripts behave like they do on Linux
 brew "stow"             # symlink farm manager — the backbone of this repo
 brew "zsh"
+brew "tmux"             # config in tmux/.tmux.conf
+brew "htop"
+brew "ncdu"
 brew "bat"              # cat with syntax highlighting
 brew "ripgrep"          # rg
 brew "fzf"              # fuzzy finder

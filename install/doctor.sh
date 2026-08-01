@@ -81,7 +81,9 @@ for c in ffmpeg dot vips yt-dlp; do check "$c"; done
 # Dotfile links
 # ---------------------------------------------------------------------------
 section "dotfile links"
-for f in .zshrc .vimrc .gitconfig .screenrc .digrc .wgetrc; do
+for f in .zshrc .bashrc .bash_profile .vimrc .tmux.conf .gitconfig .gitignore_global \
+         .editorconfig .screenrc .digrc .wgetrc \
+         .config/yazi/yazi.toml .config/gh/config.yml .config/zed/settings.json; do
   if [[ -L "$HOME/$f" ]]; then
     [[ $VERBOSE -eq 1 ]] && ok "~/$f -> $(readlink "$HOME/$f")"
     PRESENT=$((PRESENT + 1))
@@ -112,6 +114,41 @@ if has brew && [[ "$OS" == "macos" ]]; then
   else
     ok "Brewfile covers every top-level formula"
   fi
+fi
+
+# ---------------------------------------------------------------------------
+# Secret guard
+#
+# Stowing gh, yazi and zed points ~/.config/<tool> at a directory inside this
+# repo, so those tools write their runtime state here — including gh's OAuth
+# token in hosts.yml. .gitignore covers every known case; this check catches a
+# path that slipped through before it reaches a commit.
+# ---------------------------------------------------------------------------
+section "secret guard"
+if git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  leaked=0
+  for pattern in 'gh/.config/gh/hosts.yml' 'gh/.config/gh/state.yml' \
+                 '*.zshrc.local' '*.gitconfig.work' '*.pem' '*.key'; do
+    tracked="$(git -C "$DOTFILES_DIR" ls-files "$pattern" 2>/dev/null)"
+    if [[ -n "$tracked" ]]; then
+      err "TRACKED SECRET: $tracked"
+      leaked=1
+    fi
+  done
+  # Catch tokens pasted into any tracked file, whatever it is called.
+  if git -C "$DOTFILES_DIR" grep -lIE 'gh[pousr]_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY' \
+       -- . >/dev/null 2>&1; then
+    err "TRACKED SECRET: credential pattern found in a tracked file"
+    git -C "$DOTFILES_DIR" grep -lIE 'gh[pousr]_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY' -- . | sed 's/^/     /'
+    leaked=1
+  fi
+  if [[ $leaked -eq 0 ]]; then
+    ok "no secrets tracked"
+  else
+    MISSING+=("SECRET LEAK — see above, do not push")
+  fi
+else
+  skip "secret guard (not a git checkout)"
 fi
 
 # ---------------------------------------------------------------------------

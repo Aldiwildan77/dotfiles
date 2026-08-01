@@ -70,10 +70,20 @@ set_default_shell() {
   run chsh -s "$zsh_path" || warn "chsh failed — change your login shell manually"
 }
 
+install_yazi_packages() {
+  has yazi || { skip "yazi (not installed)"; return 0; }
+  [[ -f "$HOME/.config/yazi/package.toml" ]] || { skip "yazi (no package.toml — run stow first)"; return 0; }
+  # package.toml pins each plugin and flavor by revision and hash, so the
+  # vendored trees under plugins/ and flavors/ never need to be committed.
+  log "restoring yazi plugins and flavors"
+  run ya pkg install || warn "ya pkg install failed"
+}
+
 main() {
   install_omz
   install_omz_plugins
   install_fzf_bindings
+  install_yazi_packages
   set_default_shell
   ok "shell environment done"
 }
