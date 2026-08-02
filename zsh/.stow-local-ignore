@@ -1,3 +1,4 @@
-# zshrc.d is sourced by .zshrc through $DOTFILES_DIR, so it must not be
-# symlinked into $HOME as a stray ~/zshrc.d directory.
+# Both directories are sourced by .zshrc through $DOTFILES_DIR, so neither may
+# be symlinked into $HOME as a stray ~/zshrc.d or ~/profiles directory.
 ^/zshrc\.d
+^/profiles

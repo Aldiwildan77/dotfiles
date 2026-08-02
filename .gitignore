@@ -10,10 +10,11 @@ packages/**/*.local
 .bashrc.local
 .gitconfig.work
 
-# Company profiles. These used to live in zsh/zshrc.d/<company>/ and put a GCP
-# project id, an internal Go module domain and production cluster names into a
-# public history. They load from ~/.zshrc.d/<company>.zsh now; this rule stops
-# one from ever being re-added here.
+# The old company-profile layout. zsh/zshrc.d/<company>/ put a GCP project id,
+# an internal Go module domain and production cluster names into a public
+# history; this rule stops that shape from coming back. Profiles now live in
+# ~/.zshrc.d/<company>.zsh (private) or zsh/profiles/<company>.zsh (tracked,
+# and only for content that is safe to publish).
 zsh/zshrc.d/*/
 !zsh/zshrc.d/*.zsh
 *.pem

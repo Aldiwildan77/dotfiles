@@ -5,10 +5,15 @@
 #   # then start shells with: COMPANY=acme
 #   # or put `export COMPANY=acme` in ~/.zshrc.local
 #
-# ~/.zshrc.d/ is never tracked by this repo. Employer infrastructure —
-# GCP project ids, internal module domains, production cluster names, VPN
-# hosts — must not end up in a public git history. An earlier version of this
-# repo committed exactly that; this file exists so it cannot happen again.
+# .zshrc looks in two places, private first:
+#
+#   ~/.zshrc.d/<company>.zsh       never tracked — put private things here
+#   zsh/profiles/<company>.zsh     tracked — only what is safe to publish
+#
+# The private copy wins when both exist. Employer infrastructure — GCP project
+# ids, internal module domains, production cluster names, VPN hosts — must not
+# end up in a public git history. An earlier version of this repo committed
+# exactly that, which is why the split exists.
 #
 # Sourced after functions.zsh, so add_to_env and the other helpers are
 # available here.

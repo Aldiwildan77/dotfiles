@@ -54,13 +54,20 @@ done
 
 # Company profile — depends on add_to_env from functions.zsh, so it goes here.
 #
-# These used to live in the repo, which put a GCP project id, an internal
-# module domain and production cluster names in a public git history. They now
-# load from ~/.zshrc.d/<company>.zsh, which is never tracked. Nothing about a
-# specific employer belongs in this repo.
+# Two locations, private first:
+#
+#   ~/.zshrc.d/<company>.zsh          never tracked — anything employer-private
+#   zsh/profiles/<company>.zsh        tracked — only if it holds no secrets
+#
+# The private copy wins when both exist, so a tracked profile can carry the
+# harmless parts while the untracked one adds cluster names and credentials.
+# Profiles used to live in zsh/zshrc.d/<company>/ and put a GCP project id, an
+# internal module domain and production cluster names into a public history —
+# hence the split.
 if [[ -n "$COMPANY" ]]; then
   source_if_exists "$ZSHRC_D_LOCAL/$COMPANY.zsh" \
-    || echo "dotfiles: no profile at $ZSHRC_D_LOCAL/$COMPANY.zsh"
+    || source_if_exists "$DOTFILES_DIR/zsh/profiles/$COMPANY.zsh" \
+    || echo "dotfiles: no profile for '$COMPANY' in $ZSHRC_D_LOCAL or $DOTFILES_DIR/zsh/profiles"
 fi
 
 # Machine-local overrides: secrets, work paths, anything that must not be
