@@ -138,8 +138,12 @@ if git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
   # The iTerm2 export is committed on purpose, so re-scan it here: a fresh
   # `iterm2.sh export` can pick up a session key the sanitiser does not know
   # about yet, and this is the last checkpoint before it reaches a commit.
+  #
+  # The pattern is deliberately generic. Naming a specific variable would both
+  # publish which service the machine talks to and limit the check to that one
+  # name; `NAME=value` where NAME looks credential-ish covers the whole shape.
   if [[ -f "$DOTFILES_DIR/iterm2/com.googlecode.iterm2.plist" ]]; then
-    if grep -qE "$(whoami)|/Users/|WHOP_SECRET|ws_[A-Za-z0-9]{24}" \
+    if grep -qEi "$(whoami)|/Users/|(secret|token|password|passwd|api[_-]?key|credential)[A-Z_]*=[^<[:space:]]" \
          "$DOTFILES_DIR/iterm2/com.googlecode.iterm2.plist" 2>/dev/null; then
       err "TRACKED SECRET: iterm2 plist still contains a username or credential"
       leaked=1

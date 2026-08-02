@@ -2824,7 +2824,7 @@
 	<key>SeparateStatusBarsPerPane</key>
 	<false/>
 	<key>ShowFullScreenTabBar</key>
-	<true/>
+	<false/>
 	<key>ShowPaneTitlesEvenIfOnlyOnePane</key>
 	<false/>
 	<key>SoundForEsc</key>

@@ -5,7 +5,7 @@ iTerm2 keeps everything in one plist, including things that must never reach a
 public repo:
 
   * Window arrangements embed each session's recorded shell command history.
-    A command typed as `WHOP_SECRET=... some-cmd` is stored verbatim, so the
+    A command typed as `SOME_SECRET=value some-cmd` is stored verbatim, so the
     arrangement carries a live credential. Arrangements are dropped wholesale.
   * Sessions also record every directory visited, which maps out private
     project and client names.
@@ -55,14 +55,18 @@ TOPLEVEL_DROP_EXACT = {
 }
 TOPLEVEL_DROP_PREFIX = ("NoSync",)
 
+# Deliberately generic. An earlier version listed the specific variable name
+# seen on one machine, which named a private service in a public repo and only
+# ever matched that one name. These patterns are shapes, not values: a
+# credential-ish assignment, and the common vendor-prefixed token formats.
 SECRET = re.compile(
     r"(?i)"
-    r"(?:pass(?:word|wd)|secret|token|api[_-]?key|credential)\s*[=:]\s*\S+"
-    r"|ghp_[A-Za-z0-9]{16,}"
-    r"|gho_[A-Za-z0-9]{16,}"
-    r"|sk-[A-Za-z0-9-]{16,}"
-    r"|ws_[A-Za-z0-9]{24,}"
-    r"|AKIA[0-9A-Z]{16}"
+    # NAME=value / NAME: value where NAME looks like a credential
+    r"(?:pass(?:word|wd)|secret|token|api[_-]?key|credential)[A-Z0-9_]*\s*[=:]\s*\S+"
+    # short vendor prefix + long opaque body, e.g. gh*_, sk-, and friends
+    r"|\b[a-z]{2,4}[_-][A-Za-z0-9]{24,}\b"
+    r"|\bsk-[A-Za-z0-9-]{16,}\b"
+    r"|\bAKIA[0-9A-Z]{16}\b"
     r"|-----BEGIN [A-Z ]*PRIVATE KEY-----"
 )
 
