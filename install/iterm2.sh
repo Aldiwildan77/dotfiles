@@ -9,9 +9,10 @@
 # binary plist under ~/Library/Preferences, which is why a plain dotfiles scan
 # never finds it, and why this needs its own script rather than a stow package.
 #
-# The export is sanitised. iTerm2 stores each session's recorded shell command
-# history inside the window arrangement, so a raw copy of that plist can carry
-# live credentials. See install/iterm2-sanitize.py.
+# Settings only: profiles, colours, fonts, key bindings, global preferences.
+# Window arrangements are NOT synced — iTerm2 stores each session's recorded
+# shell command history inside them, so a saved layout can carry live
+# credentials. See install/iterm2-sanitize.py.
 set -uo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
@@ -74,7 +75,9 @@ do_import() {
   run defaults import "$DOMAIN" "$DEST" || die "defaults import failed"
   # cfprefsd caches the domain; without this the change is not visible.
   run killall cfprefsd 2>/dev/null || true
-  ok "imported — start iTerm2, then Window > Restore Window Arrangement"
+  ok "imported — start iTerm2 to pick up the profiles"
+  warn "window arrangements are not part of this export; recreate the layout"
+  warn "once and save it with Window > Save Window Arrangement"
 }
 
 do_diff() {
@@ -99,8 +102,9 @@ case "${1:-}" in
     cat <<EOF
 usage: $(basename "$0") {export|import|diff}
 
-  export   live iTerm2 preferences -> iterm2/com.googlecode.iterm2.plist
-           (sanitised: session command history and per-machine state removed)
+  export   live iTerm2 settings -> iterm2/com.googlecode.iterm2.plist
+           profiles, colours, fonts, key bindings. Window arrangements and
+           per-machine state are excluded.
   import   that file -> live preferences (backs up the current ones first)
   diff     show what an export would change
 

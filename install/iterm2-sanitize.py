@@ -6,14 +6,15 @@ public repo:
 
   * Window arrangements embed each session's recorded shell command history.
     A command typed as `WHOP_SECRET=... some-cmd` is stored verbatim, so the
-    arrangement carries a live credential.
+    arrangement carries a live credential. Arrangements are dropped wholesale.
   * Sessions also record every directory visited, which maps out private
     project and client names.
   * NoSync* keys are per-machine UI state (window positions, tip counters,
     installation id) that only cause churn in git.
 
-What survives is the part worth syncing: profiles, colours, fonts, key
-bindings, and the arrangement's window/split geometry.
+What survives is settings: profiles, colours, fonts, key bindings and global
+preferences. Window layouts are deliberately not synced — see
+TOPLEVEL_DROP_EXACT.
 
 Usage:
     iterm2-sanitize.py <source.plist> <dest.plist>
@@ -40,8 +41,15 @@ SESSION_DROP = {
     "Session Contents",    # scrollback, when "save contents" is enabled
 }
 
-# Top-level keys that are per-machine state.
+# Top-level keys that are per-machine state, or not worth the risk.
 TOPLEVEL_DROP_EXACT = {
+    # Arrangements are a snapshot of live sessions, not settings. Every session
+    # in one carries its recorded command history and directory history, which
+    # is how a secret passed inline as VAR=value ends up in the file. The
+    # per-session scrubbing below would handle it, but a layout is not worth
+    # relying on that: dropping the key removes the whole class of leak.
+    # Re-export with this line removed if you decide you want layouts synced.
+    "Window Arrangements",
     "NoSyncInstallationId",
     "PreventEscapeSequenceFromClearingHistory",
 }
@@ -139,12 +147,11 @@ def main():
     with open(dest, "wb") as fh:
         plistlib.dump(data, fh, fmt=plistlib.FMT_XML, sort_keys=True)
 
-    arrangements = list(data.get("Window Arrangements", {}))
     profiles = [b.get("Name") for b in data.get("New Bookmarks", [])]
     print(f"wrote {dest}")
-    print(f"  dropped {dropped_top} per-machine top-level keys")
-    print(f"  arrangements: {', '.join(arrangements) or 'none'}")
-    print(f"  profiles:     {', '.join(p for p in profiles if p) or 'none'}")
+    print(f"  dropped {dropped_top} per-machine / layout top-level keys")
+    print(f"  profiles: {', '.join(p for p in profiles if p) or 'none'}")
+    print(f"  settings: {len(data)} top-level keys (window layouts not synced)")
     return 0
 
 

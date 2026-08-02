@@ -112,18 +112,28 @@ so a symlink there does not survive. It gets its own script instead:
 
 Quit iTerm2 before either direction.
 
-**The export is sanitised, and that is not optional.** iTerm2 stores each
-session's recorded shell command history *inside* the window arrangement. On
-the machine this repo was built from, the `Daily` arrangement contained 273
-recorded commands and 434 visited directories — including a live API secret
-that had been passed inline as `SOMEVAR=... command`. `install/iterm2-sanitize.py`
-drops those keys, drops the 38 per-machine `NoSync*` keys, and rewrites `$HOME`
-to `~`. It refuses to write at all if a credential pattern survives, and
-`doctor.sh` re-scans the committed file.
+**Settings only — window arrangements are deliberately not synced.** iTerm2
+stores each session's recorded shell command history *inside* a window
+arrangement. On the machine this repo was built from, the `Daily` arrangement
+held 273 recorded commands and 434 visited directories, including a live API
+secret that had been passed inline as `SOMEVAR=... command`. A saved layout is
+not worth carrying that, so `install/iterm2-sanitize.py` drops the
+`Window Arrangements` key outright rather than trying to scrub it.
 
-What is kept: profiles, colours, fonts, key bindings, and the arrangement's
-window and split geometry. What is dropped: command history, directory
-history, session environment, and shell-integration host logs.
+| Kept | Dropped |
+| --- | --- |
+| profiles (3), colours, fonts | `Window Arrangements` — the whole key |
+| key bindings, `GlobalKeyMap` | command and directory history |
+| global preferences | session environment, host logs |
+| | 38 per-machine `NoSync*` keys |
+
+`$HOME` is rewritten to `~`, so the file is portable across machines and
+usernames. The sanitiser **fails closed**: if a credential pattern or the local
+username survives scrubbing, it prints the key path and exits non-zero without
+writing. `doctor.sh` re-scans the committed file as a second checkpoint.
+
+To sync layouts anyway, drop `"Window Arrangements"` from `TOPLEVEL_DROP_EXACT`
+in the sanitiser and re-export — but read the diff before committing it.
 
 If you pass secrets inline on the command line, they end up in this plist.
 Put them in `~/.zshrc.local` instead.
