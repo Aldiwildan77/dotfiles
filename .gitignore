@@ -37,3 +37,7 @@ yazi/.config/yazi/flavors/
 Thumbs.db
 *~
 *.swp
+
+# Python bytecode, e.g. from importing install/iterm2-sanitize.py in a test
+__pycache__/
+*.py[cod]
