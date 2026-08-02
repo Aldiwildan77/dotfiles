@@ -97,6 +97,37 @@ Yazi's plugins and flavors are **not** committed. `package.toml` pins each one
 by revision and hash, and `install/shell.sh` runs `ya pkg install` to rebuild
 them.
 
+### iTerm2 (macOS)
+
+iTerm2 is not a stow package. It keeps everything — profiles, colours, key
+bindings and window arrangements — in one binary plist at
+`~/Library/Preferences/com.googlecode.iterm2.plist`, and rewrites it on quit,
+so a symlink there does not survive. It gets its own script instead:
+
+```bash
+./install/iterm2.sh export   # live prefs -> iterm2/com.googlecode.iterm2.plist
+./install/iterm2.sh diff     # what an export would change
+./install/iterm2.sh import   # that file  -> live prefs (backs up first)
+```
+
+Quit iTerm2 before either direction.
+
+**The export is sanitised, and that is not optional.** iTerm2 stores each
+session's recorded shell command history *inside* the window arrangement. On
+the machine this repo was built from, the `Daily` arrangement contained 273
+recorded commands and 434 visited directories — including a live API secret
+that had been passed inline as `SOMEVAR=... command`. `install/iterm2-sanitize.py`
+drops those keys, drops the 38 per-machine `NoSync*` keys, and rewrites `$HOME`
+to `~`. It refuses to write at all if a credential pattern survives, and
+`doctor.sh` re-scans the committed file.
+
+What is kept: profiles, colours, fonts, key bindings, and the arrangement's
+window and split geometry. What is dropped: command history, directory
+history, session environment, and shell-integration host logs.
+
+If you pass secrets inline on the command line, they end up in this plist.
+Put them in `~/.zshrc.local` instead.
+
 ## Adding a tool
 
 Manifests are the source of truth, so adding a tool means editing data, not code:

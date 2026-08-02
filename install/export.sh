@@ -90,8 +90,19 @@ export_runtimes() {
   ok "$OUT/runtimes.local"
 }
 
+export_iterm2() {
+  [[ "$OS" == "macos" ]] || { skip "iTerm2 (macOS only)"; return 0; }
+  [[ -f "$HOME/Library/Preferences/com.googlecode.iterm2.plist" ]] \
+    || { skip "iTerm2 (not installed)"; return 0; }
+  # Writes into iterm2/ rather than a .local file: the output is already
+  # sanitised and is meant to be committed. See install/iterm2.sh.
+  log "exporting iTerm2 preferences"
+  run bash "$DOTFILES_DIR/install/iterm2.sh" export || warn "iTerm2 export failed"
+}
+
 main() {
   mkdir -p "$OUT/linux"
+  export_iterm2
   export_brew
   export_go
   export_npm

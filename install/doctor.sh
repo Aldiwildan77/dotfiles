@@ -135,6 +135,17 @@ if git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
       leaked=1
     fi
   done
+  # The iTerm2 export is committed on purpose, so re-scan it here: a fresh
+  # `iterm2.sh export` can pick up a session key the sanitiser does not know
+  # about yet, and this is the last checkpoint before it reaches a commit.
+  if [[ -f "$DOTFILES_DIR/iterm2/com.googlecode.iterm2.plist" ]]; then
+    if grep -qE "$(whoami)|/Users/|WHOP_SECRET|ws_[A-Za-z0-9]{24}" \
+         "$DOTFILES_DIR/iterm2/com.googlecode.iterm2.plist" 2>/dev/null; then
+      err "TRACKED SECRET: iterm2 plist still contains a username or credential"
+      leaked=1
+    fi
+  fi
+
   # Company profiles belong in ~/.zshrc.d, never here.
   if [[ -n "$(git -C "$DOTFILES_DIR" ls-files 'zsh/zshrc.d/*/*' 2>/dev/null)" ]]; then
     err "TRACKED COMPANY PROFILE under zsh/zshrc.d/ — move it to ~/.zshrc.d/"
