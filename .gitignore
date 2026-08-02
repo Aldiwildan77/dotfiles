@@ -9,6 +9,13 @@ packages/**/*.local
 .zshrc.local
 .bashrc.local
 .gitconfig.work
+
+# Company profiles. These used to live in zsh/zshrc.d/<company>/ and put a GCP
+# project id, an internal Go module domain and production cluster names into a
+# public history. They load from ~/.zshrc.d/<company>.zsh now; this rule stops
+# one from ever being re-added here.
+zsh/zshrc.d/*/
+!zsh/zshrc.d/*.zsh
 *.pem
 *.key
 !git/.gitconfig.work.example

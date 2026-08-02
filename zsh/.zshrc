@@ -4,8 +4,12 @@
 # Author: Muhammad Wildan Aldiansyah
 # ------------------------------------------
 
-## Load the company-specific configuration
+## Which company profile to load, if any. Set COMPANY in the environment, or
+## pass it as the first argument. Profiles live OUTSIDE this repo — see below.
 COMPANY=${COMPANY:-$1}
+
+## Where company profiles are kept. Untracked by design.
+ZSHRC_D_LOCAL="${ZSHRC_D_LOCAL:-$HOME/.zshrc.d}"
 
 ## Load the dotfiles configuration
 export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
@@ -48,13 +52,19 @@ for config in "${post_omz[@]}"; do
   source_if_exists "$DOTFILES_DIR/zsh/zshrc.d/$config"
 done
 
-# Company config depends on add_to_env from functions.zsh, so it goes here.
+# Company profile — depends on add_to_env from functions.zsh, so it goes here.
+#
+# These used to live in the repo, which put a GCP project id, an internal
+# module domain and production cluster names in a public git history. They now
+# load from ~/.zshrc.d/<company>.zsh, which is never tracked. Nothing about a
+# specific employer belongs in this repo.
 if [[ -n "$COMPANY" ]]; then
-  source_if_exists "$DOTFILES_DIR/zsh/zshrc.d/$COMPANY/$COMPANY.zsh"
+  source_if_exists "$ZSHRC_D_LOCAL/$COMPANY.zsh" \
+    || echo "dotfiles: no profile at $ZSHRC_D_LOCAL/$COMPANY.zsh"
 fi
 
 # Machine-local overrides: secrets, work paths, anything that must not be
 # committed. See zsh/.zshrc.local.example for the expected shape.
 source_if_exists "$HOME/.zshrc.local"
 
-unset pre_omz post_omz config
+unset pre_omz post_omz config ZSHRC_D_LOCAL

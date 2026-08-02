@@ -119,12 +119,21 @@ the repo.
 
 Nothing in this repo holds a credential, and nothing should.
 
-- `~/.zshrc.local` — API keys, tokens, work paths, cluster aliases.
+- `~/.zshrc.local` — API keys, tokens, machine-specific paths.
   Start from `zsh/.zshrc.local.example`. Sourced last, so it overrides
   everything committed here.
+- `~/.zshrc.d/<company>.zsh` — one profile per employer: private Go module
+  domains, workspace paths, production cluster aliases. Start from
+  `zsh/.company.zsh.example` and select one with `COMPANY=acme`.
 - `~/.gitconfig.work` — work identity and internal remote rewriting.
   Start from `git/.gitconfig.work.example`. Pulled in by `includeIf` for repos
   under `~/Workspace/`.
+
+Company profiles previously lived in `zsh/zshrc.d/<company>/` **inside this
+repo**, which published a GCP project id, an internal Go module domain and
+production cluster names to a public git history. They load from `~/.zshrc.d/`
+now; `.gitignore` blocks `zsh/zshrc.d/*/` and `doctor.sh` fails if one is ever
+tracked again.
 
 Both paths are gitignored. Better still, keep secrets out of the shell entirely
 and resolve them at use time with `sops`, `age` or a password manager CLI —

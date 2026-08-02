@@ -30,6 +30,16 @@
 # alias ws="cd \$WORKSPACE"
 
 # ---------------------------------------------------------------------------
+# Company profile
+#
+# Anything tied to one employer — private module domains, workspace paths,
+# production cluster aliases — goes in ~/.zshrc.d/<company>.zsh instead of
+# here, so you can carry several and load one at a time. Template:
+# ~/.company.zsh.example. Set COMPANY to pick which one loads.
+# ---------------------------------------------------------------------------
+# export COMPANY="acme"
+
+# ---------------------------------------------------------------------------
 # Kubernetes contexts — cluster names are employer-specific
 # ---------------------------------------------------------------------------
 # alias kcprod='kubectl --context my-prod-cluster'

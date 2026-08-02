@@ -135,6 +135,13 @@ if git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
       leaked=1
     fi
   done
+  # Company profiles belong in ~/.zshrc.d, never here.
+  if [[ -n "$(git -C "$DOTFILES_DIR" ls-files 'zsh/zshrc.d/*/*' 2>/dev/null)" ]]; then
+    err "TRACKED COMPANY PROFILE under zsh/zshrc.d/ — move it to ~/.zshrc.d/"
+    git -C "$DOTFILES_DIR" ls-files 'zsh/zshrc.d/*/*' | sed 's/^/     /'
+    leaked=1
+  fi
+
   # Catch tokens pasted into any tracked file, whatever it is called.
   if git -C "$DOTFILES_DIR" grep -lIE 'gh[pousr]_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY' \
        -- . >/dev/null 2>&1; then
