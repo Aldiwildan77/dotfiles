@@ -1,0 +1,81 @@
+# Debian / Ubuntu base packages (apt)
+#
+# Only packages that genuinely exist in the Debian/Ubuntu archives live here.
+# Anything without a good distro package is installed by Homebrew-on-Linux
+# (see packages/brew-linux.txt) or by a dedicated installer in install/linux.sh.
+
+# --- build + core userland -------------------------------------------------
+build-essential
+automake
+pkg-config
+coreutils
+stow
+zsh
+curl
+wget
+git
+git-lfs
+mercurial
+unzip
+zip
+xz-utils
+ca-certificates
+gnupg
+apt-transport-https
+software-properties-common
+locales
+
+# --- shell quality of life -------------------------------------------------
+tree
+vim
+screen
+tmux
+htop
+ncdu
+jq
+ripgrep
+fzf
+bat            # binary is `batcat` on Debian; zsh/aliases handles the alias
+
+# --- sysadmin / networking -------------------------------------------------
+openssh-client
+rsync
+net-tools
+dnsutils
+iputils-ping
+traceroute
+telnet
+arp-scan
+nload
+lsof
+strace
+tcpdump
+nmap
+
+# --- languages -------------------------------------------------------------
+python3
+python3-pip
+python3-venv
+perl
+ruby-full
+php-cli
+composer
+
+# --- backend / data clients ------------------------------------------------
+default-mysql-client
+postgresql-client
+redis-tools
+sqlite3
+protobuf-compiler
+
+# --- infrastructure --------------------------------------------------------
+ansible
+qemu-system
+rclone
+
+# --- media / docs ----------------------------------------------------------
+ffmpeg
+ghostscript
+graphviz
+libvips-tools
+libjpeg-turbo-progs

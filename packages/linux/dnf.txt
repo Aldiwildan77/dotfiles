@@ -1,0 +1,75 @@
+# Fedora / RHEL / Rocky base packages (dnf)
+# Same role as apt.txt — see that file for the split rationale.
+
+# --- build + core userland -------------------------------------------------
+@development-tools
+automake
+pkgconf-pkg-config
+coreutils
+stow
+zsh
+curl
+wget
+git
+git-lfs
+mercurial
+unzip
+zip
+xz
+ca-certificates
+gnupg2
+
+# --- shell quality of life -------------------------------------------------
+tree
+vim
+screen
+tmux
+htop
+ncdu
+jq
+ripgrep
+fzf
+bat
+
+# --- sysadmin / networking -------------------------------------------------
+openssh-clients
+rsync
+net-tools
+bind-utils
+iputils
+traceroute
+telnet
+arp-scan
+nload
+lsof
+strace
+tcpdump
+nmap
+
+# --- languages -------------------------------------------------------------
+python3
+python3-pip
+perl
+ruby
+ruby-devel
+php-cli
+composer
+
+# --- backend / data clients ------------------------------------------------
+mysql
+postgresql
+redis
+sqlite
+protobuf-compiler
+
+# --- infrastructure --------------------------------------------------------
+ansible
+qemu-kvm
+rclone
+
+# --- media / docs ----------------------------------------------------------
+ffmpeg-free
+ghostscript
+graphviz
+vips-tools
+libjpeg-turbo-utils

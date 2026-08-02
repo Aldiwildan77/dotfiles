@@ -1,0 +1,15 @@
+# Windows packages — scoop, for tools winget does not carry well.
+# Requires the `main` and `extras` buckets; install/windows.ps1 adds them.
+
+stern
+kubectx
+mkcert
+grpcurl
+golang-migrate
+actionlint
+lazygit
+delta
+gnupg
+which
+touch
+sudo

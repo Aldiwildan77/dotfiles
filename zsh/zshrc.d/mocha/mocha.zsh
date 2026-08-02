@@ -1,1 +1,0 @@
-echo "mocha.zsh sourced!"

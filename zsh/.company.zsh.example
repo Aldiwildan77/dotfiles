@@ -1,0 +1,54 @@
+# Company profile template.
+#
+#   mkdir -p ~/.zshrc.d
+#   cp ~/.company.zsh.example ~/.zshrc.d/acme.zsh
+#   # then start shells with: COMPANY=acme
+#   # or put `export COMPANY=acme` in ~/.zshrc.local
+#
+# .zshrc looks in two places, private first:
+#
+#   ~/.zshrc.d/<company>.zsh       never tracked — put private things here
+#   zsh/profiles/<company>.zsh     tracked — only what is safe to publish
+#
+# The private copy wins when both exist. Employer infrastructure — GCP project
+# ids, internal module domains, production cluster names, VPN hosts — must not
+# end up in a public git history. An earlier version of this repo committed
+# exactly that, which is why the split exists.
+#
+# Sourced after functions.zsh, so add_to_env and the other helpers are
+# available here.
+
+# ---------------------------------------------------------------------------
+# Private Go modules
+# ---------------------------------------------------------------------------
+# add_to_env GOPRIVATE  "gitlab.com/acme"
+# add_to_env GONOPROXY  "gitlab.com/acme"
+# add_to_env GONOSUMDB  "gitlab.com/acme"
+
+# ---------------------------------------------------------------------------
+# Workspace
+# ---------------------------------------------------------------------------
+# export ACME_WORKSPACE="$HOME/Workspace/acme"
+# alias aw="cd \$ACME_WORKSPACE"
+
+# ---------------------------------------------------------------------------
+# Kubernetes contexts
+# ---------------------------------------------------------------------------
+# alias kcprod='kubectl --context acme-prod'
+# alias kcstag='kubectl --context acme-staging'
+# alias skcprod='stern --context acme-prod'
+# alias skcstag='stern --context acme-staging'
+
+# ---------------------------------------------------------------------------
+# Cloud credentials
+# ---------------------------------------------------------------------------
+# export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"
+
+# ---------------------------------------------------------------------------
+# Secrets
+#
+# Do not paste tokens here either — ~/.zshrc.d is untracked, but it still sits
+# in your home directory in plaintext. Pull them at use time instead:
+# ---------------------------------------------------------------------------
+# export ACME_API_KEY="$(sops -d ~/.secrets.enc.yaml | yq '.acme_api_key')"
+# export ACME_API_KEY="$(op read op://Work/acme-api/credential)"

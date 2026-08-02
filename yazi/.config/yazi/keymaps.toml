@@ -1,0 +1,4 @@
+[[mgr.prepend_keymap]]
+on = "Y"
+run = ["plugin copy-file-contents"]
+desc = "Copy contents of file"

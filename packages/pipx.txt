@@ -1,0 +1,10 @@
+# Python CLI applications — installed with `pipx install <pkg>`
+# pipx keeps each tool in its own venv, so nothing here can break the others or
+# the system Python. Libraries belong in a project venv, not this file.
+
+ansible-core    # also available via the distro/brew package; pipx keeps it current
+ansible-lint
+poetry
+httpie
+uv              # fast pip/venv replacement
+pre-commit

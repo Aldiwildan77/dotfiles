@@ -1,13 +1,7 @@
-#!/bin/bash
-echo "Setting up dotfiles..."
-
-# Install required packages
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install stow peco git
-else
-    sudo apt install -y stow peco git
-fi
-
-stow zsh vim git screen dig wget
-
-echo "Dotfiles setup completed!"
+#!/usr/bin/env bash
+# Thin wrapper kept for muscle memory. All the work lives in install/.
+#
+#   ./setup.sh              # everything
+#   ./setup.sh packages     # OS packages only
+#   ./setup.sh --help       # stage list and env vars
+exec bash "$(cd "$(dirname "$0")" && pwd)/install/bootstrap.sh" "$@"

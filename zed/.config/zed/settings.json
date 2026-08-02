@@ -1,0 +1,94 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "edit_predictions": {
+    "mode": "subtle",
+    "provider": "zed"
+  },
+  // "ssh_connections" is deliberately absent: it holds private hostnames and
+  // usernames. Zed writes entries back here as you add remotes, so re-check
+  // this file before committing changes to it.
+  "project_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left",
+    "tree_view": true
+  },
+  "cli_default_open_behavior": "new_window",
+  "diff_view_style": "split",
+  "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-5-mini",
+      "enable_thinking": true,
+      "effort": "high"
+    },
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "icon_theme": "Zed (Default)",
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "base_keymap": "VSCode",
+  "preview_tabs": {
+    "enabled": false
+  },
+  "cursor_blink": true,
+  "file_types": {
+    "json": [
+      "*.json"
+    ],
+    "dotenv": [
+      ".env",
+      ".development.env"
+    ],
+    "javascript": [
+      "*.js"
+    ],
+    "makefile": [
+      "Makefile"
+    ],
+    "graphql": [
+      "*.gql"
+    ],
+    "html": [
+      "*.html"
+    ],
+    "javascriptreact": [
+      "*.jsx"
+    ]
+  },
+  "auto_indent_on_paste": true,
+  "linked_edits": true,
+  "use_on_type_format": true,
+  "show_edit_predictions": true,
+  "line_ending": "prefer_lf",
+  "wrap_guides": [
+    125
+  ],
+  "preferred_line_length": 100,
+  "tab_size": 2,
+  "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "type": "registry"
+    }
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "One Dark",
+  },
+}

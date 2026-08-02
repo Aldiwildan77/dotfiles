@@ -1,0 +1,39 @@
+# Machine snapshots produced by install/export.sh. Diff these against the
+# curated manifests, fold in what belongs, then discard — never commit a raw
+# dump: it carries one-off installs and work tooling with it.
+packages/*.local
+packages/**/*.local
+
+# Anything holding secrets stays out, no matter how it got here.
+*.local.zsh
+.zshrc.local
+.bashrc.local
+.gitconfig.work
+
+# The old company-profile layout. zsh/zshrc.d/<company>/ put a GCP project id,
+# an internal Go module domain and production cluster names into a public
+# history; this rule stops that shape from coming back. Profiles now live in
+# ~/.zshrc.d/<company>.zsh (private) or zsh/profiles/<company>.zsh (tracked,
+# and only for content that is safe to publish).
+zsh/zshrc.d/*/
+!zsh/zshrc.d/*.zsh
+*.pem
+*.key
+!git/.gitconfig.work.example
+!zsh/.zshrc.local.example
+
+# gh keeps the OAuth token in hosts.yml, right next to the config it shares a
+# directory with. Only config.yml is safe to track.
+gh/.config/gh/hosts.yml
+gh/.config/gh/state.yml
+
+# yazi vendors plugins and flavors into the config dir. package.toml pins them
+# by revision and hash, so `ya pkg install` rebuilds these from scratch.
+yazi/.config/yazi/plugins/
+yazi/.config/yazi/flavors/
+
+# OS noise
+.DS_Store
+Thumbs.db
+*~
+*.swp

@@ -1,0 +1,52 @@
+# Machine-local zsh config — copy to ~/.zshrc.local and edit.
+#
+#   cp ~/.zshrc.local.example ~/.zshrc.local
+#
+# Sourced last by .zshrc, so anything here overrides the committed config.
+# This is where secrets and employer-specific settings belong. ~/.zshrc.local
+# is gitignored and must never be committed to this repo.
+
+# ---------------------------------------------------------------------------
+# Secrets — real values only, never commit these
+# ---------------------------------------------------------------------------
+# export SOME_API_KEY="..."
+# export INTERNAL_API_PASSWORD="..."
+#
+# Better still, keep them out of the shell entirely and pull them at use time:
+#   export SOME_API_KEY="$(op read op://Private/some-service/credential)"
+#   export SOME_API_KEY="$(sops -d ~/.secrets.enc.yaml | yq '.some_key')"
+
+# ---------------------------------------------------------------------------
+# Private Go modules
+# ---------------------------------------------------------------------------
+# export GOPRIVATE="gitlab.com/yourcompany"
+# export GONOSUMDB="$GOPRIVATE"
+# export GONOPROXY="$GOPRIVATE"
+
+# ---------------------------------------------------------------------------
+# Workspace shortcuts
+# ---------------------------------------------------------------------------
+# export WORKSPACE="$HOME/Workspace/Development"
+# alias ws="cd \$WORKSPACE"
+
+# ---------------------------------------------------------------------------
+# Company profile
+#
+# Anything tied to one employer — private module domains, workspace paths,
+# production cluster aliases — goes in ~/.zshrc.d/<company>.zsh instead of
+# here, so you can carry several and load one at a time. Template:
+# ~/.company.zsh.example. Set COMPANY to pick which one loads.
+# ---------------------------------------------------------------------------
+# export COMPANY="acme"
+
+# ---------------------------------------------------------------------------
+# Kubernetes contexts — cluster names are employer-specific
+# ---------------------------------------------------------------------------
+# alias kcprod='kubectl --context my-prod-cluster'
+# alias kcstag='kubectl --context my-staging-cluster'
+# alias skcprod='stern --context my-prod-cluster'
+
+# ---------------------------------------------------------------------------
+# Cloud credentials
+# ---------------------------------------------------------------------------
+# export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"

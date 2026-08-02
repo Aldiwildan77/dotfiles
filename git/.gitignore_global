@@ -1,0 +1,48 @@
+# Global gitignore — wired up by core.excludesfile in .gitconfig.
+# Things that should never be committed anywhere, on any machine.
+
+# --- OS --------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*~
+.directory
+
+# --- editors ---------------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+.nvimlog
+.zed/
+
+# --- environments and secrets ----------------------------------------------
+.env.local
+.env.*.local
+*.pem
+*.key
+!**/testdata/**/*.pem
+.direnv/
+
+# --- build noise -----------------------------------------------------------
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+target/debug/
+target/release/
+vendor/
+.terraform/
+*.tfstate.backup
+
+# --- agent / tooling scratch ----------------------------------------------
+.claude/settings.local.json

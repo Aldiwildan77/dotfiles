@@ -1,0 +1,18 @@
+# Work git identity — copy to ~/.gitconfig.work and edit.
+#
+#   cp ~/.gitconfig.work.example ~/.gitconfig.work
+#
+# Pulled in by ~/.gitconfig via includeIf, so it only applies to repos under
+# the work directory. Not committed: the identity and internal hostnames here
+# are employer-specific.
+
+[user]
+	name = Your Name
+	email = you@company.com
+
+# SSH for internal remotes even when a tool hands you an https URL.
+# [url "git@gitlab.com:"]
+# 	insteadOf = https://gitlab.com/
+
+# [credential "https://gitlab.com"]
+# 	helper = !glab auth git-credential
