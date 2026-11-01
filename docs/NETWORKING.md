@@ -361,7 +361,7 @@ traceroute host                       # hop-by-hop path (UDP)
 traceroute -I host                    # ICMP probes, if UDP is filtered
 traceroute -T -p 443 host             # Linux: TCP probes to a port
 sudo mtr host                         # live loss/latency per hop
-mtr -rwc 100 host                     # 100-cycle report to paste in a ticket
+sudo mtr -rwc 100 host                # 100-cycle report for a ticket
 ```
 
 A row of `* * *` hops in `traceroute` is usually a firewall dropping probes,
