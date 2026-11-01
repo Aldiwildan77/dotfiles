@@ -58,8 +58,6 @@ python3-pip
 python3-venv
 perl
 ruby-full
-php-cli
-composer
 
 # --- backend / data clients ------------------------------------------------
 default-mysql-client

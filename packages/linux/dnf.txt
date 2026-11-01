@@ -52,8 +52,6 @@ python3-pip
 perl
 ruby
 ruby-devel
-php-cli
-composer
 
 # --- backend / data clients ------------------------------------------------
 mysql

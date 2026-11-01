@@ -27,6 +27,7 @@ stages:
 env:
   DRY_RUN=1     print what would happen, change nothing
   SKIP_BREW=1   Linux only: skip the Homebrew parity set
+  SKIP_CHSH=1   keep the current login shell instead of switching to zsh
 
 with no arguments every stage runs, in the order listed above.
 EOF
@@ -57,6 +58,13 @@ main() {
 
   local requested=("$@")
   [[ ${#requested[@]} -gt 0 ]] || requested=("${STAGES[@]}")
+
+  # Git Bash / MSYS can run this script, but nothing past the package stage
+  # works there (nvm, pyenv, stow and the zsh config are all POSIX-only).
+  case "$OS" in
+    windows) die "native Windows: run install\\windows.ps1 from PowerShell (or use WSL2 and run this there)" ;;
+    unknown) die "unsupported OS: ${OSTYPE:-$(uname -s)}" ;;
+  esac
 
   log "dotfiles bootstrap — os=$OS arch=$ARCH repo=$DOTFILES_DIR"
   [[ "$DRY_RUN" == "1" ]] && warn "DRY_RUN=1 — nothing will be modified"

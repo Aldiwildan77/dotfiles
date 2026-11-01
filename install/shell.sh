@@ -53,6 +53,11 @@ install_fzf_bindings() {
 }
 
 set_default_shell() {
+  # SKIP_CHSH=1 keeps the current login shell (bash/.bashrc is a full config too).
+  if [[ "${SKIP_CHSH:-0}" == "1" ]]; then
+    skip "default shell (SKIP_CHSH=1)"
+    return 0
+  fi
   has zsh || { warn "zsh not installed — cannot set the default shell"; return 0; }
   local zsh_path
   zsh_path="$(command -v zsh)"

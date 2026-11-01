@@ -17,8 +17,6 @@ OpenJS.NodeJS.LTS
 Python.Python.3.13
 Rustlang.Rustup
 Oracle.JDK.17
-PHP.PHP
-Getcomposer.Composer
 RubyInstallerTeam.RubyWithDevKit
 
 # --- backend / data --------------------------------------------------------

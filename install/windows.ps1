@@ -42,6 +42,15 @@ function Read-Manifest {
         Where-Object { $_ -ne '' }
 }
 
+# winget/scoop update PATH in the registry, not in this session. Re-read it so
+# tools installed a moment ago (go, git) are usable without opening a new shell.
+function Update-SessionPath {
+    $env:Path = @(
+        [Environment]::GetEnvironmentVariable('Path', 'Machine'),
+        [Environment]::GetEnvironmentVariable('Path', 'User')
+    ) -join ';'
+}
+
 function Install-Wsl {
     Write-Step 'installing WSL2 with Ubuntu'
     if ($DryRun) { Write-Host '  would run: wsl --install -d Ubuntu'; return }
@@ -74,7 +83,15 @@ function Install-Scoop {
         Write-Step 'installing scoop'
         if ($DryRun) { Write-Host '  would install scoop'; return }
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+        # The scoop installer refuses to run elevated; say why instead of letting
+        # every package below fail with "scoop is not recognized".
+        try { Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression }
+        catch { Write-Warn "scoop install failed: $($_.Exception.Message)" }
+        Update-SessionPath
+        if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+            Write-Warn 'scoop is not available — if this is an Administrator shell, re-run from a normal one (or use -SkipScoop)'
+            return
+        }
     }
     if ($DryRun) { Write-Host '  would add buckets and install scoop packages'; return }
 
@@ -111,6 +128,7 @@ if ($Wsl) {
 } else {
     Install-Winget
     Install-Scoop
+    Update-SessionPath
     Install-GoTools
     Write-Ok 'windows packages done — open a new shell to pick up PATH changes'
     Write-Host ''

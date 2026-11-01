@@ -21,14 +21,13 @@ git-filter-repo
 # --- languages + toolchains ------------------------------------------------
 go
 tinygo-org/tools/tinygo
-vfox
 pyenv
 pnpm
 yarn
 
 # --- backend / data --------------------------------------------------------
 golang-migrate
-yoheimuta/protolint/protolint
+protolint
 temporal
 sonar-scanner
 actionlint
@@ -48,5 +47,4 @@ mutagen-io/mutagen/mutagen
 
 # --- taps needed by the entries above --------------------------------------
 # tinygo-org/tools
-# yoheimuta/protolint
 # mutagen-io/mutagen

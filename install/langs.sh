@@ -9,6 +9,14 @@ set -uo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 load_brew || true
+
+# Per-user install dirs. A non-interactive script does not read the shell
+# config, so without these every `has bun` / `has pipx` check misses an
+# existing install and reinstalls it on each run.
+for _d in "$HOME/.local/bin" "$HOME/.bun/bin" "$HOME/.deno/bin" "$HOME/.cargo/bin" "$HOME/go/bin"; do
+  [[ -d "$_d" ]] && export PATH="$_d:$PATH"
+done
+unset _d
 # shellcheck disable=SC1091
 source "$DOTFILES_DIR/packages/runtimes.env"
 
@@ -43,8 +51,18 @@ install_node() {
     done < <(read_manifest "$DOTFILES_DIR/packages/npm.txt")
   fi
 
-  has bun  || { log "installing bun";  run bash -c "curl -fsSL https://bun.sh/install | bash" || warn "bun install failed"; }
-  has deno || { log "installing deno"; run bash -c "curl -fsSL https://deno.land/install.sh | sh" || warn "deno install failed"; }
+  # Neither installer may edit ~/.zshrc / ~/.bashrc — they are stowed from this
+  # repo, which already puts ~/.bun/bin and ~/.deno/bin on PATH. bun only edits
+  # the rc file of a shell it recognises, so it gets SHELL=sh; deno has a flag.
+  if has bun; then ok "bun already installed"; else
+    log "installing bun"
+    run env SHELL=/bin/sh bash -c "curl -fsSL https://bun.sh/install | bash" || warn "bun install failed"
+  fi
+  if has deno; then ok "deno already installed"; else
+    log "installing deno"
+    # -y: no "edit shell config?" prompt, which would block an unattended run.
+    run sh -c "curl -fsSL https://deno.land/install.sh | sh -s -- -y --no-modify-path" || warn "deno install failed"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -94,6 +112,7 @@ install_python() {
 # ---------------------------------------------------------------------------
 
 install_go() {
+  install_go_versions
   if ! has go; then
     warn "go is not installed — run the OS package pass first; skipping go tools"
     return 0
@@ -106,16 +125,33 @@ install_go() {
     log "go install $pkg"
     run go install "$pkg" || warn "go install $pkg failed"
   done < <(read_manifest "$DOTFILES_DIR/packages/go.txt")
+}
 
-  # vfox carries the older Go lines that legacy services still build against.
-  if has vfox; then
-    vfox list 2>/dev/null | grep -q golang || run vfox add golang || true
-    local v
-    for v in $GO_VERSIONS; do
-      log "vfox install golang@$v"
-      run vfox install "golang@$v" || warn "vfox install golang@$v failed"
-    done
+# GVM carries the older Go lines that legacy services still build against.
+# It uses binary releases, so it does not depend on the system `go`.
+install_go_versions() {
+  export GVM_ROOT="$HOME/.gvm"
+  if [[ ! -s "$GVM_ROOT/scripts/gvm" ]]; then
+    log "installing gvm"
+    # GVM_NO_UPDATE_PROFILE: the installer must not append to ~/.zshrc /
+    # ~/.bashrc, which are stowed from this repo; tools.zsh already loads GVM.
+    run env GVM_NO_UPDATE_PROFILE=1 bash -c \
+      "curl -fsSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash" \
+      || { warn "gvm install failed"; return 0; }
   fi
+  [[ -s "$GVM_ROOT/scripts/gvm" ]] || return 0
+
+  local v
+  for v in $GO_VERSIONS; do
+    if [[ -d "$GVM_ROOT/gos/go$v" ]]; then
+      ok "gvm go$v already installed"
+      continue
+    fi
+    log "gvm install go$v"
+    # -B fetches the official binary release, so no bootstrap Go toolchain is needed.
+    run bash -c 'source "$GVM_ROOT/scripts/gvm" && gvm install "go$1" -B' _ "$v" \
+      || warn "gvm install go$v failed"
+  done
 }
 
 # ---------------------------------------------------------------------------
@@ -152,8 +188,26 @@ install_ruby() {
     warn "ruby is not installed — skipping gems"
     return 0
   fi
-  local g
+  # macOS ships Ruby 2.6, too old for current cocoapods/rubocop. load_brew puts
+  # Homebrew's ruby first when it is installed; say so when it is not.
+  local ruby_major
+  ruby_major="$(ruby -e 'print RUBY_VERSION.split(".").first' 2>/dev/null || echo 0)"
+  (( ruby_major >= 3 )) || warn "using ruby $(ruby -e 'print RUBY_VERSION' 2>/dev/null) from $(command -v ruby) — some gems need ruby >= 3 (brew install ruby)"
+
+  local g other
   while IFS= read -r g; do
+    if gem list -i "^${g}\$" >/dev/null 2>&1; then
+      skip "$g (gem already installed)"
+      continue
+    fi
+    # Same tool already installed another way (e.g. fastlane from Homebrew):
+    # leave both alone and let the user pick, rather than installing a copy
+    # that shadows the other on PATH.
+    other="$(command -v "$g" 2>/dev/null || true)"
+    if [[ -n "$other" ]]; then
+      warn "$g is already installed at $other — skipping the gem (remove one to avoid two copies)"
+      continue
+    fi
     log "gem install $g"
     # --user-install keeps this out of the system gem dir, so no sudo is needed.
     run gem install --user-install "$g" || warn "gem install $g failed"
@@ -167,15 +221,29 @@ install_ruby() {
 install_java() {
   [[ -n "${JAVA_VERSION:-}" ]] || { skip "java (no version pinned)"; return 0; }
   export SDKMAN_DIR="$HOME/.sdkman"
+
+  # SDKMAN! needs Bash 4+, and macOS's /bin/bash is 3.2. Every SDKMAN step
+  # runs in a modern bash subprocess instead of this script's own shell.
+  local sdk_bash= candidate
+  for candidate in /opt/homebrew/bin/bash /usr/local/bin/bash /home/linuxbrew/.linuxbrew/bin/bash "$(command -v bash)"; do
+    [[ -x "$candidate" ]] || continue
+    if "$candidate" -c '(( BASH_VERSINFO[0] >= 4 ))' 2>/dev/null; then
+      sdk_bash="$candidate"; break
+    fi
+  done
+  [[ -n "$sdk_bash" ]] || { warn "sdkman needs bash >= 4 (brew install bash)"; return 0; }
+
   if [[ ! -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
-    log "installing sdkman"
-    run bash -c "curl -fsSL https://get.sdkman.io | bash" || { warn "sdkman install failed"; return 0; }
+    log "installing sdkman (with $sdk_bash)"
+    # rcupdate=false: the installer must not append to ~/.zshrc / ~/.bashrc,
+    # which are stowed from this repo; zsh/zshrc.d/tools.zsh already loads SDKMAN!.
+    run "$sdk_bash" -c "curl -fsSL 'https://get.sdkman.io?rcupdate=false' | '$sdk_bash'" \
+      || { warn "sdkman install failed"; return 0; }
   fi
   [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] || return 0
-  # shellcheck disable=SC1091
-  source "$SDKMAN_DIR/bin/sdkman-init.sh"
   log "sdk install java $JAVA_VERSION"
-  run sdk install java "$JAVA_VERSION" || warn "sdk install java $JAVA_VERSION failed"
+  run "$sdk_bash" -c 'source "$SDKMAN_DIR/bin/sdkman-init.sh" && sdkman_auto_answer=true sdk install java "$1"' \
+    _ "$JAVA_VERSION" || warn "sdk install java $JAVA_VERSION failed"
 }
 
 main() {

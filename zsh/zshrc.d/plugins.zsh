@@ -33,7 +33,6 @@ plugins=(
   npm                     # Node.js package manager
   yarn                    # Yarn package manager
   bun                     # Bun completions
-  composer                # PHP dependency manager
 
   kubectl                 # Autocompletion for kubectl commands
   helm                    # Kubernetes Helm package manager

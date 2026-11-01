@@ -52,14 +52,15 @@ section "version control"
 for c in gh git-lfs; do check "$c"; done
 
 section "languages"
-for c in go node npm python3 pip3 ruby gem php composer; do check "$c"; done
+for c in go node npm python3 pip3 ruby gem; do check "$c"; done
 check cargo "rustup"
 check bun
 check deno
 check java
 
 section "version managers"
-for c in pyenv vfox; do check "$c"; done
+check pyenv
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && PRESENT=$((PRESENT + 1)) || MISSING+=("gvm")
 [[ -s "$HOME/.nvm/nvm.sh" ]] && PRESENT=$((PRESENT + 1)) || MISSING+=("nvm")
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && PRESENT=$((PRESENT + 1)) || MISSING+=("sdkman")
 
@@ -84,8 +85,12 @@ section "dotfile links"
 for f in .zshrc .bashrc .bash_profile .vimrc .tmux.conf .gitconfig .gitignore_global \
          .editorconfig .screenrc .digrc .wgetrc \
          .config/yazi/yazi.toml .config/gh/config.yml .config/zed/settings.json; do
-  if [[ -L "$HOME/$f" ]]; then
-    [[ $VERBOSE -eq 1 ]] && ok "~/$f -> $(readlink "$HOME/$f")"
+  # stow may link the file itself or "fold" a whole directory (~/.config/yazi ->
+  # repo), so check where the file really lives, not whether it is a symlink.
+  real_dir="$(cd -P "$(dirname "$HOME/$f")" 2>/dev/null && pwd -P)"
+  [[ -L "$HOME/$f" ]] && real_dir="$(cd -P "$(dirname "$HOME/$f")/$(dirname "$(readlink "$HOME/$f")")" 2>/dev/null && pwd -P)"
+  if [[ -n "$real_dir" && "$real_dir/" == "$(cd -P "$DOTFILES_DIR" && pwd -P)/"* ]]; then
+    [[ $VERBOSE -eq 1 ]] && ok "~/$f -> $real_dir/$(basename "$f")"
     PRESENT=$((PRESENT + 1))
   elif [[ -e "$HOME/$f" ]]; then
     warn "~/$f exists but is not a symlink — run './setup.sh stow'"

@@ -105,31 +105,59 @@ read_manifest() {
 # Homebrew
 # ---------------------------------------------------------------------------
 
-# Put brew on PATH if it is installed but not yet exported (fresh shells, CI).
+# Put brew on PATH (fresh shells, CI) and in FRONT of the system dirs, even when
+# it is already on PATH: otherwise /usr/bin/ruby (2.6 on macOS), /bin/bash (3.2)
+# and friends shadow the Homebrew versions the later stages rely on.
 load_brew() {
-  has brew && return 0
-  local candidate
-  for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew \
-                   /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"; do
-    if [[ -x "$candidate" ]]; then
-      eval "$("$candidate" shellenv)"
-      return 0
-    fi
-  done
-  return 1
+  local candidate brew_bin=
+  if has brew; then
+    brew_bin="$(command -v brew)"
+  else
+    for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew \
+                     /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"; do
+      [[ -x "$candidate" ]] && { brew_bin="$candidate"; break; }
+    done
+  fi
+  [[ -n "$brew_bin" ]] || return 1
+  eval "$("$brew_bin" shellenv)"
+  local prefix="${HOMEBREW_PREFIX:-$(dirname "$(dirname "$brew_bin")")}"
+  export PATH="$prefix/bin:$prefix/sbin:$PATH"
 }
 
+# Returns non-zero on failure rather than exiting: on Linux Homebrew is optional,
+# and a failed install must not stop the native/vendor passes. Callers that
+# cannot continue without brew (macOS) decide to die themselves.
 install_brew() {
   load_brew && { ok "homebrew already installed"; return 0; }
   log "installing homebrew"
   run /bin/bash -c \
     "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
-    || die "homebrew install failed"
-  load_brew || die "homebrew installed but not found on PATH"
+    || { err "homebrew install failed"; return 1; }
+  [[ "$DRY_RUN" == "1" ]] && return 0
+  load_brew || { err "homebrew installed but not found on PATH"; return 1; }
 }
 
 # brew_install_each <manifest> — install one at a time so a single bad formula
 # does not abort the whole run.
+#
+# warn_untrusted_taps <tap ...> — Homebrew refuses formulae from third-party taps
+# until they are trusted with `brew trust`. Trusting is a deliberate per-machine
+# decision, so this only reports the commands to run; it never trusts anything.
+warn_untrusted_taps() {
+  local trusted tap missing=()
+  # Older Homebrew has no `brew trust` and loads every tap, so nothing to do.
+  trusted="$(brew trust --json=v1 2>/dev/null)" || return 0
+  for tap in "$@"; do
+    grep -q "\"$tap[\"/]" <<<"$trusted" || missing+=("$tap")
+  done
+  [[ ${#missing[@]} -gt 0 ]] || return 0
+  warn "untrusted third-party taps — their formulae will fail to install:"
+  for tap in "${missing[@]}"; do
+    warn "    brew trust --tap $tap"
+  done
+  warn "run those, then re-run this stage"
+}
+
 brew_install_each() {
   local manifest="$1" pkg
   while IFS= read -r pkg; do

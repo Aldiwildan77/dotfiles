@@ -42,7 +42,7 @@ Captured from a macOS 26.3 / arm64 machine. Legend:
 | --- | --- | --- | --- | --- |
 | go | primary backend language | full | brew | full |
 | tinygo | embedded / wasm targets | full | brew | manual |
-| vfox | keeps older Go lines alongside the default | full | brew | manual |
+| gvm | keeps older Go lines alongside the default | full | full | manual |
 | node (nvm) | pinned in `packages/runtimes.env` | full | full | full |
 | bun, deno | alternate JS runtimes | full | full | manual |
 | pnpm, yarn, nx | JS package management and monorepos | full | brew | full |
@@ -50,7 +50,6 @@ Captured from a macOS 26.3 / arm64 machine. Legend:
 | pipx | Python CLIs, each in its own venv | full | full | full |
 | rust (rustup) | rustc, cargo, clippy, rust-analyzer | full | full | full |
 | ruby | fastlane and the iOS toolchain | full | full | full |
-| php 8.4 + composer | with phpredis and xdebug | full | full | full |
 | java (SDKMAN!) | pinned in `packages/runtimes.env` | full | full | manual |
 | perl | local::lib under `~/perl5` | full | full | wsl |
 
@@ -77,7 +76,7 @@ installed with `go install`, so identical on all three platforms.
 
 | Tool | Purpose | macOS | Linux | Windows |
 | --- | --- | --- | --- | --- |
-| docker | Desktop on macOS, Engine from the upstream repo on Linux | full | manual | full |
+| docker | colima + CLI on macOS, Engine from the upstream repo on Linux | full | manual | full |
 | kubectl | — | full | brew | full |
 | helm | — | full | brew | full |
 | k9s | cluster TUI | full | brew | full |
@@ -92,7 +91,7 @@ installed with `go install`, so identical on all three platforms.
 | mkcert | locally-trusted TLS certs | full | brew | scoop |
 | mutagen | fast file sync into containers and remotes | full | brew | manual |
 | rclone | cloud storage sync | full | full | full |
-| qemu | VMs and cross-arch emulation | full | full | n/a |
+| qemu | VMs and cross-arch emulation (Linux; colima uses macOS virtualization) | n/a | full | n/a |
 
 ## SysAdmin and networking
 
@@ -112,7 +111,7 @@ and Linux, mostly available on Windows via winget.
 ## macOS-only
 
 `fastlane`, `swiftlint`, `swiftgen`, `xcodegen` and the Xcode Command Line
-Tools. Casks: `alt-tab`, `copyq`, `herd`, `postman`, `bloomrpc`, `wave`,
+Tools. Casks: `alt-tab`, `postman`, `wave`,
 `android-platform-tools`, `mole-app`.
 
 ## Config packages
@@ -139,8 +138,6 @@ read as one environment.
 
 ## Deliberately excluded
 
-- **GVM** (Go Version Manager) — its shell scripts are bash-only and print
-  `command not found: _encode` on every zsh prompt. `vfox` covers the same need.
 - **conda / miniconda** — heavyweight, and `pyenv` + `uv` cover the same ground
   without the shell hook.
 - **RVM** — `tools.zsh` still sources it if a machine has it, but new machines

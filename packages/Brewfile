@@ -11,16 +11,12 @@
 # Taps
 # ---------------------------------------------------------------------------
 tap "mutagen-io/mutagen"
-tap "nrwl/nx"
-tap "shivammathur/extensions"
-tap "shivammathur/php"
 tap "tinygo-org/tools"
-tap "version-fox/tap"
-tap "yoheimuta/protolint"
 
 # ---------------------------------------------------------------------------
 # Shell + core userland
 # ---------------------------------------------------------------------------
+brew "bash"             # Bash 5 — macOS ships 3.2; SDKMAN! and modern scripts need 4+
 brew "coreutils"        # GNU coreutils, so scripts behave like they do on Linux
 brew "stow"             # symlink farm manager — the backbone of this repo
 brew "zsh"
@@ -40,7 +36,6 @@ brew "yq"
 brew "yazi"             # TUI file manager (see the `y` function in zsh/functions)
 brew "rtk"              # CLI proxy that trims LLM token usage on dev commands
 brew "gnupg"
-brew "openssl@1.1"
 brew "mbedtls"
 brew "libxmlsec1"
 brew "cjson"
@@ -62,17 +57,11 @@ brew "mercurial"
 # ---------------------------------------------------------------------------
 brew "go"
 brew "tinygo-org/tools/tinygo"
-brew "vfox"             # polyglot version manager (currently manages golang)
 brew "pyenv"
-brew "python@3.10"
-brew "python@3.11"
-brew "php@8.4"
-brew "composer"
-brew "shivammathur/extensions/phpredis@8.4"
-brew "shivammathur/extensions/xdebug@8.5"
+brew "ruby"             # macOS ships 2.6; gems in packages/gem.txt need >= 3
 brew "pnpm"
 brew "yarn"
-brew "nrwl/nx/nx"
+brew "nx"
 
 # ---------------------------------------------------------------------------
 # Backend / data
@@ -82,7 +71,7 @@ brew "libpq"            # psql & friends without the full postgres server
 brew "redis"
 brew "sqlite"
 brew "protobuf"
-brew "yoheimuta/protolint/protolint"
+brew "protolint"
 brew "golang-migrate"
 brew "temporal"
 brew "sonar-scanner"
@@ -97,9 +86,12 @@ brew "helm"
 brew "k9s"
 brew "stern"            # multi-pod log tailing
 brew "kubectx"          # kubectx + kubens
+brew "colima"           # Docker runtime VM — replaces Docker Desktop (`colima start`)
+brew "docker"           # docker CLI only, talks to colima
+brew "docker-compose"   # `docker compose` plugin
+brew "docker-buildx"    # `docker buildx` plugin
 brew "awscli"
 brew "flyctl"
-brew "qemu"
 brew "mkcert"           # local trusted TLS certs
 brew "sops"             # encrypted secrets at rest
 brew "age"              # sops backend
@@ -117,7 +109,6 @@ brew "ffmpeg"
 brew "ghostscript"
 brew "graphviz"
 brew "vips"
-brew "jpeg"
 brew "yt-dlp"
 
 # ---------------------------------------------------------------------------
@@ -133,11 +124,7 @@ brew "xcodegen"
 # ---------------------------------------------------------------------------
 cask "alt-tab"
 cask "android-platform-tools"
-cask "copyq"
-cask "docker"           # Docker Desktop
-cask "google-cloud-sdk"
-cask "herd"             # local PHP dev environment
+cask "gcloud-cli"       # was google-cloud-sdk
 cask "postman"
-cask "bloomrpc"         # gRPC GUI client
 cask "mole-app"
 cask "wave"             # terminal

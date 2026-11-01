@@ -30,11 +30,10 @@ if command -v pyenv >/dev/null 2>&1; then
 fi
 
 # ---------------------------------------------------------------------------
-# Go — vfox handles the legacy Go lines; the default `go` comes from the
-# package manager. GVM is deliberately not loaded: its shell scripts are
-# bash-only and spew `command not found: _encode` errors under zsh.
+# Go — GVM handles the legacy Go lines; the default `go` comes from the
+# package manager until you `gvm use go<version>`.
 # ---------------------------------------------------------------------------
-command -v vfox >/dev/null 2>&1 && eval "$(vfox activate zsh)"
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
 # ---------------------------------------------------------------------------
 # Rust

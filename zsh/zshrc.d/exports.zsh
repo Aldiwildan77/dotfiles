@@ -63,8 +63,6 @@ fi
 # entries of their own. $HOMEBREW_PREFIX is set by base.zsh.
 # ---------------------------------------------------------------------------
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
-  path_prepend "$HOMEBREW_PREFIX/opt/php@8.4/bin"
-  path_prepend "$HOMEBREW_PREFIX/opt/php@8.4/sbin"
   path_prepend "$HOMEBREW_PREFIX/opt/libpq/bin"        # psql, pg_dump
   path_prepend "$HOMEBREW_PREFIX/opt/mysql-client@8.0/bin"
   path_prepend "$HOMEBREW_PREFIX/opt/perl/bin"

@@ -73,6 +73,16 @@ export NVM_DIR="$HOME/.nvm"
 
 command -v pyenv >/dev/null 2>&1 && eval "$(pyenv init -)"
 
+# Ruby — gems installed with `gem install --user-install` (pod, rubocop, rufo).
+command -v ruby >/dev/null 2>&1 && path_prepend "$(ruby -e 'puts Gem.user_dir' 2>/dev/null)/bin"
+
+# Go — GVM for the legacy Go lines (`gvm use go1.19.1`).
+[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"
+
+# Java — SDKMAN! (needs bash 4+; macOS /bin/bash is 3.2). Keep last: it edits PATH.
+export SDKMAN_DIR="$HOME/.sdkman"
+[ "${BASH_VERSINFO[0]}" -ge 4 ] && [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ] && . "$SDKMAN_DIR/bin/sdkman-init.sh"
+
 # ---------------------------------------------------------------------------
 # Aliases — the subset worth having outside zsh
 # ---------------------------------------------------------------------------

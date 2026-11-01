@@ -81,7 +81,7 @@ export_runtimes() {
   log "recording runtime versions"
   {
     echo "# Versions present on $(hostname) at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-    for t in go node bun deno python3 ruby php java rustc docker kubectl terraform ansible; do
+    for t in go node bun deno python3 ruby java rustc docker kubectl terraform ansible; do
       if has "$t"; then
         printf '%-10s %s\n' "$t" "$("$t" --version 2>&1 | head -1)"
       fi
