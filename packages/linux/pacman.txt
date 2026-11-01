@@ -49,6 +49,9 @@ lsof
 strace
 tcpdump
 nmap
+openbsd-netcat
+mtr
+iperf3
 
 # --- languages -------------------------------------------------------------
 go

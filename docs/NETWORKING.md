@@ -232,8 +232,10 @@ Never committed, by design:
 | ping        | ICMP reachability            | built-in   | iputils            |
 | traceroute  | path discovery               | built-in   | traceroute         |
 | telnet      | raw TCP check                | Brewfile   | telnet/inetutils   |
-| nc          | TCP/UDP port checks          | built-in   | not in lists       |
-| nmap        | port and host scanning       | not listed | apt/dnf/pacman     |
+| nc          | TCP/UDP port checks          | built-in   | netcat (per distro)|
+| nmap        | port and host scanning       | Brewfile   | apt/dnf/pacman     |
+| mtr         | live per-hop loss + latency  | Brewfile   | apt/dnf/pacman     |
+| iperf3      | throughput between hosts     | Brewfile   | apt/dnf/pacman     |
 | tcpdump     | packet capture               | built-in   | apt/dnf/pacman     |
 | arp-scan    | LAN host discovery           | Brewfile   | apt/dnf/pacman     |
 | nload       | live interface bandwidth     | Brewfile   | apt/dnf/pacman     |
@@ -358,6 +360,8 @@ ping -c 4 host                        # loss and latency
 traceroute host                       # hop-by-hop path (UDP)
 traceroute -I host                    # ICMP probes, if UDP is filtered
 traceroute -T -p 443 host             # Linux: TCP probes to a port
+sudo mtr host                         # live loss/latency per hop
+mtr -rwc 100 host                     # 100-cycle report to paste in a ticket
 ```
 
 A row of `* * *` hops in `traceroute` is usually a firewall dropping probes,
@@ -451,8 +455,7 @@ nload                                 # live in/out per interface
 nload -m                              # all interfaces at once
 ```
 
-For throughput between two hosts, use `iperf3`. It is not in the package
-lists; see [Known gaps](#known-gaps).
+For throughput between two hosts, use `iperf3` on both ends:
 
 ```
 iperf3 -s                             # on the server
@@ -608,14 +611,10 @@ Usable hosts is the address count minus 2 (network and broadcast), except for
 These differences exist in the repo today; they are noted here rather than
 silently papered over.
 
-- **nmap, mtr and iperf3 are not in the macOS Brewfile.** Linux installs
-  nmap. To add them on macOS, append to `packages/Brewfile`:
-  `brew "nmap"`, `brew "mtr"`, `brew "iperf3"`.
-- **netcat is not in the Linux lists.** macOS ships `nc`; on Linux, install
-  `netcat-openbsd` (apt) or `nmap-ncat` (dnf).
-- **`mole` in the Brewfile is a Mac disk cleaner** (mole.fit), not an SSH
-  tunnel manager as its Brewfile comment says. Use `ssh -L` or mutagen for
-  tunnels.
+- **mtr on macOS needs `sudo`.** Homebrew does not make its probe helper
+  setuid, so plain `mtr` fails with a permission error.
+- **There is no dedicated SSH tunnel manager.** Use `ssh -L/-R/-D` or
+  mutagen. (`mole` in the Brewfile is a Mac disk cleaner, not a tunnel tool.)
 - **`localip` assumes `en0`** on macOS. On Macs where Wi-Fi is `en1`, check
   `networksetup -listallhardwareports`.
 - **Networking shortcuts are zsh-only**, apart from `myip`.

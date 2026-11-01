@@ -97,8 +97,11 @@ brew "sops"             # encrypted secrets at rest
 brew "age"              # sops backend
 brew "mutagen-io/mutagen/mutagen"
 brew "rclone"
-brew "mole"             # SSH tunnel manager
+brew "mole"             # Mac disk cleaner / optimizer (mole.fit), CLI for mole-app
 brew "arp-scan"
+brew "nmap"             # port and host scanning
+brew "mtr"              # traceroute + ping per hop (run with sudo on macOS)
+brew "iperf3"           # throughput between two hosts
 brew "nload"
 brew "telnet"
 

@@ -51,6 +51,9 @@ lsof
 strace
 tcpdump
 nmap
+netcat-openbsd
+mtr-tiny
+iperf3
 
 # --- languages -------------------------------------------------------------
 python3
