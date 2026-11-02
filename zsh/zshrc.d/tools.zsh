@@ -33,7 +33,21 @@ fi
 # Go — GVM handles the legacy Go lines; the default `go` comes from the
 # package manager until you `gvm use go<version>`.
 # ---------------------------------------------------------------------------
-[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+# GVM is bash-first. In zsh, without an environments/system file its fallback
+# version detection yields a blank Go name and prints "Invalid or corrupt Go
+# version" on every new shell, so make sure that file exists. The stderr
+# redirect hides harmless `_encode`/`_decode` noise from its bash-only helpers.
+if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
+  if [[ ! -f "$HOME/.gvm/environments/system" ]]; then
+    mkdir -p "$HOME/.gvm/environments"
+    printf '%s\n' \
+      "export GVM_ROOT; GVM_ROOT=\"$HOME/.gvm\"" \
+      'export gvm_go_name; gvm_go_name="system"' \
+      'export gvm_pkgset_name; gvm_pkgset_name=""' \
+      > "$HOME/.gvm/environments/system"
+  fi
+  source "$HOME/.gvm/scripts/gvm" 2>/dev/null
+fi
 
 # ---------------------------------------------------------------------------
 # Rust

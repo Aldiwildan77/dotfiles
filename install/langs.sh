@@ -141,6 +141,17 @@ install_go_versions() {
   fi
   [[ -s "$GVM_ROOT/scripts/gvm" ]] || return 0
 
+  # Without environments/system, GVM's zsh startup falls back to a broken
+  # version lookup and prints "Invalid or corrupt Go version" on every shell.
+  if [[ ! -f "$GVM_ROOT/environments/system" ]]; then
+    mkdir -p "$GVM_ROOT/environments"
+    printf '%s\n' \
+      "export GVM_ROOT; GVM_ROOT=\"$GVM_ROOT\"" \
+      'export gvm_go_name; gvm_go_name="system"' \
+      'export gvm_pkgset_name; gvm_pkgset_name=""' \
+      > "$GVM_ROOT/environments/system"
+  fi
+
   local v
   for v in $GO_VERSIONS; do
     if [[ -d "$GVM_ROOT/gos/go$v" ]]; then
